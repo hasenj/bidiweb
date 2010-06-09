@@ -1,0 +1,24 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"> </script>
+<script type="text/javascript" src="autobidi.js"> </script>
+
+
+<p> This is an english paragraph </p>
+
+<p> هذه فقرة عربية</p>
+
+<p> git هو نظام سورس كونترول. لاحظ ان هذه فقرة عربية مع انها تبدأ بكلمة انكليزية</p>
+
+<p> ع is a letter that doesn't exist in english. Note how this is an english paragraph even though it starts with an arabic letter </p>
+
+<p> TODO: insert here some paragraphs that start with an explicit (invisible) rtl/ltr sign <p>
+
+<script type="text/javascript">
+function check_dir() {
+    var d = $(this);
+    var text = d.html();
+    var dir = determine_par_base_direction(text);
+    alert(dir);
+}
+jQuery('p').click(check_dir);
+</script>
+
