@@ -1,24 +1,50 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"> </script>
 <script type="text/javascript" src="autobidi.js"> </script>
 
-
+<div style="width: 600px; margin: 10px 200px;">
 <p> This is an english paragraph </p>
 
-<p> هذه فقرة عربية</p>
+<p> هذه فقرة عربية </p>
 
 <p> git هو نظام سورس كونترول. لاحظ ان هذه فقرة عربية مع انها تبدأ بكلمة انكليزية</p>
 
 <p> ع is a letter that doesn't exist in english. Note how this is an english paragraph even though it starts with an arabic letter </p>
 
-<p> TODO: insert here some paragraphs that start with an explicit (invisible) rtl/ltr sign <p>
+<p> TODO: insert here some paragraphs that start with an explicit (invisible)
+rtl/ltr sign </p>
 
+<p>押さえきれない：おさえきれない：غير مقيد، لا يمكن ايقافه</p>
+
+<p>押さえきれない：おさえきれない：غير مقيد، لا يمكن ايقافه<br>
+  離さずに：はなさずに：من دون ان يترك<br>
+  翔び立つ：とびだつ：ينطلق<br>
+  巡り逢い：めぐりあい：لقاء بعد غياب طويل، بلوغ الطلب .. الخ<br>
+  動き出す：うぐきだす：يتحرك<br>
+  運命：うんめい：القدر<br>
+  早める：はやめる：يسرِّع<br>
+   
+  قوتي اللتي لا يملك احد ايقافها<br>
+  تنطلق دون ان تفارقني<br>
+  لقائنا القادم يسرع خطى القدر
+</p>
+
+<p>
+  قوتي اللتي لا يملك احد ايقافها<br>
+  تنطلق دون ان تفارقني<br>
+  لقائنا القادم يسرع خطى القدر
+</p>
+</p>
+</div>
+  
 <script type="text/javascript">
-function check_dir() {
-    var d = $(this);
-    var text = d.html();
-    var dir = determine_par_base_direction(text);
-    alert(dir);
-}
-jQuery('p').click(check_dir);
+fix_dir('p');
 </script>
+
+<style type="text/css">
+p { 
+    background-color: #e9e9e9;
+    color: 333;
+    padding: 6px;
+}
+</style>
 

@@ -39,7 +39,8 @@ function determine_par_base_direction(text)
 
     // should be really the same as dirs because we already filtered out
     // things that are not words!
-    var hard_dirs = dirs.filter(is_non_neutral_dir);
+    var X = 10;
+    var hard_dirs = dirs.filter(is_non_neutral_dir).slice(0, X);
 
     if (hard_dirs.length == 0) { return 'N'; }
     var candidate = hard_dirs[0];
@@ -88,4 +89,53 @@ var get_word_dir = function(word) {
     }
 }
 
+/**
+    High Level API 
 
+    Fix the direction for a given set of elements
+
+    Requires jQuery
+
+    @param query: jQuery query; i.e. input to jQuery(...)
+    @param method: one of 'inline' or 'class' (defaults to inline)
+    @param ltr_class: if you choose 'class' for the method, this is the class
+        name that will be added to elements which are detected to be LTR;
+        defaults to 'ltr'
+    @param rtl_class: if you choose 'class' for the method, this is the class
+        name that will be added to elements which are detected to be RTL;
+        defaults to 'rtl'
+ */
+function fix_dir(query, method, ltr_class, rtl_class)
+{
+
+    function fix_dir_inline() {
+        var e = $(this); // element
+        var dir = determine_par_base_direction(e.text());
+        if(dir == 'L') {
+            e.css('direction', 'ltr').css('text-align', 'left');
+        } else if (dir == 'R') {
+            e.css('direction', 'rtl').css('text-align', 'right');
+        }
+    }
+    function fix_dir_by_class(ltr_class, rtl_class) {
+        ltr_class = ltr_class || 'ltr';
+        rtl_class = rtl_class || 'rtl';
+        var e = $(this); // element
+        var dir = determine_par_base_direction(e.text());
+        if(dir == 'L') {
+            e.addClass(ltr_class);
+        } else if (dir == 'R') {
+            e.addClass(rtl_class);
+        }
+    }
+
+    method = method || 'inline';
+    var elements = jQuery(query);
+    if(method == 'inline') {
+        elements.each(fix_dir_inline);
+    } else if (method == 'class') {
+        elements.each(fix_dir_by_class);
+    } else {
+        console.log("Error: autobidi: the specified method is invalid: " + method);
+    }
+}
