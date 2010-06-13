@@ -42,6 +42,6 @@ if (!Array.prototype.map)
   };
 }
 
-if (!console) {
-  console = { 'log': function() { } };
+if (typeof console === 'undefined') {
+  console = { 'log': function() {} };
 }
