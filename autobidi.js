@@ -96,7 +96,7 @@ var get_word_dir = function(word) {
 
     Requires jQuery
 
-    @param query: jQuery query; i.e. input to jQuery(...)
+    @param query: jQuery query; i.e. input to jQuery(...): either a string or a jQuery object
     @param method: one of 'inline' or 'class' (defaults to inline)
     @param ltr_class: if you choose 'class' for the method, this is the class
         name that will be added to elements which are detected to be LTR;
@@ -105,8 +105,7 @@ var get_word_dir = function(word) {
         name that will be added to elements which are detected to be RTL;
         defaults to 'rtl'
  */
-function fix_dir(query, method, ltr_class, rtl_class)
-{
+function fix_dir(query, sub_query, method, ltr_class, rtl_class) {
 
     function fix_dir_inline() {
         var e = $(this); // element
@@ -130,7 +129,9 @@ function fix_dir(query, method, ltr_class, rtl_class)
     }
 
     method = method || 'inline';
-    var elements = jQuery(query);
+    sub_query = sub_query || 'h1, h2, h3, p, ul, ol, blockquote'
+    var container = jQuery(query);
+    var elements = jQuery(sub_query, container);
     if(method == 'inline') {
         elements.each(fix_dir_inline);
     } else if (method == 'class') {
@@ -139,3 +140,4 @@ function fix_dir(query, method, ltr_class, rtl_class)
         console.log("Error: autobidi: the specified method is invalid: " + method);
     }
 }
+
