@@ -145,6 +145,7 @@ function fix_dir(options) {
             'L': { 'direction': 'ltr', 'text-align': 'left' },
             'R': { 'direction': 'rtl', 'text-align': 'right' }
             }
+        if(!(dir in map)) return;
         e.css('direction', map[dir]['direction']);
         if(options.set_align) {
             e.css('text-align', map[dir]['text-align']);
@@ -155,6 +156,7 @@ function fix_dir(options) {
         var e = jQuery(this); // element
         var dir = bidiweb.par_direction(e.text());
         var map = {'L': options.ltr_class, 'R': options.rtl_class};
+        if(!(dir in map)) return;
         e.addClass(map[dir]);
     }
 
