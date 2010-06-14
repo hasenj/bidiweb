@@ -163,7 +163,7 @@ function fix_dir(options) {
     var container = jQuery(options.container);
     var elements = jQuery(options.elements, container);
     if(options.extra_elements) {
-        elements = elements.add(jQuery(extra_elements, container));
+        elements = elements.add(jQuery(options.extra_elements, container));
     }
     var map = {'inline': j_fix_dir_inline, 'class': j_fix_dir_by_class};
     if (!(options.method in map))
