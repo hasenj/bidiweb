@@ -1,3 +1,8 @@
+// namespace
+if(typeof bidiweb === 'undefined') {
+    bidiweb = {};
+}
+
 /**
     Input: raw text
     Output: The base direction of the paragraph
@@ -20,7 +25,7 @@
        this heuristic [NOT-YET]
        - We only return N if the paragraph doesn't seem to have any real words
  */
-function determine_par_base_direction(text)
+bidiweb.par_direction = function(text)
 {
     // TODO: check first character is a unicode dir character!
     var is_word = function(word) {
@@ -29,7 +34,7 @@ function determine_par_base_direction(text)
     }
     var words = text.split(' ').filter(is_word);
 
-    var dirs = words.map(get_word_dir);
+    var dirs = words.map(bidiweb.get_word_dir);
 
     var func_same_direction = function(dir) { 
         return function(d) { return d == dir; }; 
@@ -66,7 +71,7 @@ function determine_par_base_direction(text)
 /**
     @notes: assumes `word` is already setup properly
  */
-var get_word_dir = function(word) {
+bidiweb.get_word_dir = function(word) {
     // stolen from google's i18n.bidi
     // regexes to identify ltr and rtl characters
     // TODO: check if CJK are included as ltr or no?
@@ -96,48 +101,71 @@ var get_word_dir = function(word) {
 
     Requires jQuery
 
-    @param query: jQuery query; i.e. input to jQuery(...): either a string or a jQuery object
-    @param method: one of 'inline' or 'class' (defaults to inline)
+    @param container: jQuery query that finds container elements; i.e. input to
+        jQuery(...): either a string or a jQuery object
+    @param elements: optional: a query to find elements that we want to fix.
+        The default is: 'h1, h2, h3, p, ul, ol, blockquote'
+    @param extra_elements: optional: if you don't want to replace the default
+        elements, you can specify extra elements that you want to process
+    @param method: optional, one of 'inline' or 'class' (defaults to inline)
     @param ltr_class: if you choose 'class' for the method, this is the class
         name that will be added to elements which are detected to be LTR;
         defaults to 'ltr'
     @param rtl_class: if you choose 'class' for the method, this is the class
         name that will be added to elements which are detected to be RTL;
         defaults to 'rtl'
+    @param set_align: optional. When using the inline method, should we also
+        set the text-align attribute? defaults to `true`
  */
-function fix_dir(query, sub_query, method, ltr_class, rtl_class) {
-
-    function fix_dir_inline() {
-        var e = $(this); // element
-        var dir = determine_par_base_direction(e.text());
-        if(dir == 'L') {
-            e.css('direction', 'ltr').css('text-align', 'left');
-        } else if (dir == 'R') {
-            e.css('direction', 'rtl').css('text-align', 'right');
-        }
-    }
-    function fix_dir_by_class(ltr_class, rtl_class) {
-        ltr_class = ltr_class || 'ltr';
-        rtl_class = rtl_class || 'rtl';
-        var e = $(this); // element
-        var dir = determine_par_base_direction(e.text());
-        if(dir == 'L') {
-            e.addClass(ltr_class);
-        } else if (dir == 'R') {
-            e.addClass(rtl_class);
-        }
+function fix_dir(options) {
+    // allow the user to just pass the container and count on the defaults
+    if(typeof options === 'string'){
+        options = {'container': options}
     }
 
-    method = method || 'inline';
-    sub_query = sub_query || 'h1, h2, h3, p, ul, ol, blockquote'
-    var container = jQuery(query);
-    var elements = jQuery(sub_query, container);
-    if(method == 'inline') {
-        elements.each(fix_dir_inline);
-    } else if (method == 'class') {
-        elements.each(fix_dir_by_class);
-    } else {
+    var default_options = {
+        'container': '.content',
+        'elements': 'h1, h2, h3, p, ul, ol, blockquote',
+        'extra_elements': null,
+        'rtl_class': 'rtl',
+        'ltr_class': 'ltr',
+        'method': 'inline',
+        'set_align': true
+        }
+
+    // use default options
+    for(key in default_options) {
+        if (!(key in options)) options[key] = default_options[key];
+    }
+
+    function j_fix_dir_inline() {
+        var e = jQuery(this); // element
+        var dir = bidiweb.par_direction(e.text());
+        var map = { 
+            'L': { 'direction': 'ltr', 'text-align': 'left' },
+            'R': { 'direction': 'rtl', 'text-align': 'right' }
+            }
+        e.css('direction', map[dir]['direction']);
+        if(options.set_align) {
+            e.css('text-align', map[dir]['text-align']);
+        }
+    }
+
+    function j_fix_dir_by_class() {
+        var e = jQuery(this); // element
+        var dir = bidiweb.par_direction(e.text());
+        var map = {'L': options.ltr_class, 'R': options.rtl_class};
+        e.addClass(map[dir]);
+    }
+
+    var container = jQuery(options.container);
+    var elements = jQuery(options.elements, container);
+    if(options.extra_elements) {
+        elements = elements.add(jQuery(extra_elements, container));
+    }
+    var map = {'inline': j_fix_dir_inline, 'class': j_fix_dir_by_class};
+    if (!(options.method in map))
         console.log("Error: autobidi: the specified method is invalid: " + method);
-    }
+    elements.each(map[options.method])
 }
 
