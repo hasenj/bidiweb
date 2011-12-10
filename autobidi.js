@@ -1,6 +1,55 @@
+// Fill in missing functions (for IE)
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp*/)
+  {
+    var len = this.length >>> 0;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var res = [];
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in this)
+      {
+        var val = this[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, this))
+          res.push(val);
+      }
+    }
+
+    return res;
+  };
+}
+
+if (!Array.prototype.map)
+{
+  Array.prototype.map = function(fun /*, thisp*/)
+  {
+    var len = this.length >>> 0;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var res = new Array(len);
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in this)
+        res[i] = fun.call(thisp, this[i], i, this);
+    }
+
+    return res;
+  };
+}
+
+if (typeof console === 'undefined') {
+  console = { 'log': function() {} };
+}
 // namespace
 bidiweb = (function(){
 var module = {};
+
 /**
     Input: raw text
     Output: The base direction of the paragraph
@@ -164,7 +213,6 @@ module.fix_dir = function (options) {
         var clean_css = function() {
             var e = $(this);
             var clean_prop = function(e, prop) {
-                console.log("Parent's " + prop + ": ", e.parent().css(prop));
                 if(e.css(prop) == e.parent().css(prop)) {
                     e.css(prop, '');
                 }
@@ -196,10 +244,7 @@ module.fix_dir = function (options) {
     }
     var map = {'inline': j_fix_dir_inline, 'class': j_fix_dir_by_class};
     if (!(options.method in map)) {
-        if (typeof console !== "undefined" && console !== null) {
-          if (typeof console.log === "function")
-            console.log("Warning: autobidi: the specified method is invalid: " + method);
-        }
+        console.log("Warning: autobidi: the specified method is invalid: " + method);
         options.method = default_options.method;
     }
     elements.each(map[options.method])
