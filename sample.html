@@ -3,7 +3,7 @@
 <script type="text/javascript" src="autobidi.js"> </script>
 <script type="text/javascript">
 jQuery(document).ready( function(){
-    bidiweb.fix_dir('#content');
+    bidiweb.fix_dir({container: '#content', use_guesstimate: true});
     jQuery('body').show();
     });
 </script>
@@ -30,9 +30,10 @@ jQuery(document).ready( function(){
   
 <style type="text/css">
 p { 
-    background-color: #e9e9e9;
+    background-color: hsl(120, 16%, 88%);
     color: 333;
-    padding: 6px;
+    padding: 6px 12px;
+    border-radius: 3px
 }
 </style>
 

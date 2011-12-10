@@ -9,7 +9,8 @@ if(typeof bidiweb === 'undefined') {
 
     @returns: a string, one of: ('R', 'L', 'N')
 
-    The heuristic is as follows:
+    If guesstimate is false, returns the direction of the first character.
+    If guesstimate is true, it uses the following heuristic:
 
     - Read the first X words (use 15 for X) of the first line.
     - Use the direction of the first words as the first candidate, call it D,
@@ -21,12 +22,14 @@ if(typeof bidiweb === 'undefined') {
     - Else, return D as the base paragraph direction
 
     Notes: 
-       - An explicit unicode mark as the first character can be used to verride
+       - An explicit unicode mark as the first character can be used to override
        this heuristic [NOT-YET]
        - We only return N if the paragraph doesn't seem to have any real words
  */
-bidiweb.get_direction = function(text)
+bidiweb.get_direction = function(text, guesstimate)
 {
+    if (guesstimate == null) guesstimate = false;
+
     // TODO: check first character is a unicode dir character!
     var is_word = function(word) {
         return word.length > 0; // && word.match(/\w+/) 
@@ -49,6 +52,10 @@ bidiweb.get_direction = function(text)
 
     if (hard_dirs.length == 0) { return 'N'; }
     var candidate = hard_dirs[0];
+
+    if(guesstimate === false) {
+        return candidate;
+    }
 
     var DIR_COUNT_THRESHOLD = 6;
     if (hard_dirs.length < DIR_COUNT_THRESHOLD) return candidate;
@@ -133,6 +140,7 @@ bidiweb.fix_dir = function (options) {
         'ltr_class': 'ltr',
         'method': 'inline',
         'clean': true,
+        'use_guesstimate': false,
         'set_align': false,
         }
 
@@ -143,7 +151,7 @@ bidiweb.fix_dir = function (options) {
 
     function j_fix_dir_inline() {
         var e = jQuery(this); // element
-        var dir = bidiweb.get_direction(e.text());
+        var dir = bidiweb.get_direction(e.text(), options.use_guesstimate);
         var map = { 
             'L': 'ltr',
             'R': 'rtl',
@@ -177,7 +185,7 @@ bidiweb.fix_dir = function (options) {
 
     function j_fix_dir_by_class() {
         var e = jQuery(this); // element
-        var dir = bidiweb.get_direction(e.text());
+        var dir = bidiweb.get_direction(e.text(), options.use_guesstimate);
         var map = {'L': options.ltr_class, 'R': options.rtl_class};
         if(!(dir in map)) return;
         e.addClass(map[dir]);
