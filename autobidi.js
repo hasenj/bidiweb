@@ -25,7 +25,7 @@ if(typeof bidiweb === 'undefined') {
        this heuristic [NOT-YET]
        - We only return N if the paragraph doesn't seem to have any real words
  */
-bidiweb.par_direction = function(text)
+bidiweb.get_direction = function(text)
 {
     // TODO: check first character is a unicode dir character!
     var is_word = function(word) {
@@ -114,10 +114,12 @@ bidiweb.get_word_dir = function(word) {
     @param rtl_class: if you choose 'class' for the method, this is the class
         name that will be added to elements which are detected to be RTL;
         defaults to 'rtl'
+    @param clean: don't put extra attributes that are not needed
+        For example, if the parent element is already LTR, there's no need to clutter the html/dom with extra css properties
     @param set_align: optional. When using the inline method, should we also
         set the text-align attribute? defaults to `true`
  */
-function fix_dir(options) {
+bidiweb.fix_dir = function (options) {
     // allow the user to just pass the container and count on the defaults
     if(typeof options === 'string'){
         options = {'container': options}
@@ -130,7 +132,8 @@ function fix_dir(options) {
         'rtl_class': 'rtl',
         'ltr_class': 'ltr',
         'method': 'inline',
-        'set_align': true
+        'clean': true,
+        'set_align': false,
         }
 
     // use default options
@@ -140,34 +143,59 @@ function fix_dir(options) {
 
     function j_fix_dir_inline() {
         var e = jQuery(this); // element
-        var dir = bidiweb.par_direction(e.text());
+        var dir = bidiweb.get_direction(e.text());
         var map = { 
-            'L': { 'direction': 'ltr', 'text-align': 'left' },
-            'R': { 'direction': 'rtl', 'text-align': 'right' }
+            'L': 'ltr',
+            'R': 'rtl',
             }
         if(!(dir in map)) return;
-        e.css('direction', map[dir]['direction']);
+        e.css('direction', map[dir]);
         if(options.set_align) {
-            e.css('text-align', map[dir]['text-align']);
+            // we might have problems with cleaning after-wards ..
+            // so by default, set_aligh is set to false
+            e.css('text-align', 'start');
         }
+        var clean_css = function() {
+            var e = $(this);
+            var clean_prop = function(e, prop) {
+                console.log("Parent's " + prop + ": ", e.parent().css(prop));
+                if(e.css(prop) == e.parent().css(prop)) {
+                    e.css(prop, '');
+                }
+            }
+            clean_prop(e, 'direction');
+            clean_prop(e, 'text-align');
+            if(e.attr('style') == '') {
+                e.removeAttr('style');
+            }
+        }
+        if(options.clean) {
+            e.each(clean_css); // must be called on each element individually .. even though e here is one element, but still do it this way
+        }
+
     }
 
     function j_fix_dir_by_class() {
         var e = jQuery(this); // element
-        var dir = bidiweb.par_direction(e.text());
+        var dir = bidiweb.get_direction(e.text());
         var map = {'L': options.ltr_class, 'R': options.rtl_class};
         if(!(dir in map)) return;
         e.addClass(map[dir]);
     }
 
     var container = jQuery(options.container);
-    var elements = jQuery(options.elements, container);
+    var elements = container.find(options.elements);
     if(options.extra_elements) {
-        elements = elements.add(jQuery(options.extra_elements, container));
+        elements = elements.add(container.find(options.extra_elements));
     }
     var map = {'inline': j_fix_dir_inline, 'class': j_fix_dir_by_class};
-    if (!(options.method in map))
-        console.log("Error: autobidi: the specified method is invalid: " + method);
+    if (!(options.method in map)) {
+        if (typeof console !== "undefined" && console !== null) {
+          if (typeof console.log === "function")
+            console.log("Warning: autobidi: the specified method is invalid: " + method);
+        }
+        options.method = default_options.method;
+    }
     elements.each(map[options.method])
 }
 
