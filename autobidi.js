@@ -1,8 +1,6 @@
 // namespace
-if(typeof bidiweb === 'undefined') {
-    bidiweb = {};
-}
-
+bidiweb = (function(){
+var module = {};
 /**
     Input: raw text
     Output: The base direction of the paragraph
@@ -26,7 +24,7 @@ if(typeof bidiweb === 'undefined') {
        this heuristic [NOT-YET]
        - We only return N if the paragraph doesn't seem to have any real words
  */
-bidiweb.get_direction = function(text, guesstimate)
+module.get_direction = function(text, guesstimate)
 {
     if (guesstimate == null) guesstimate = false;
 
@@ -37,7 +35,7 @@ bidiweb.get_direction = function(text, guesstimate)
     }
     var words = text.split(' ').filter(is_word);
 
-    var dirs = words.map(bidiweb.get_word_dir);
+    var dirs = words.map(module.get_word_dir);
 
     var func_same_direction = function(dir) { 
         return function(d) { return d == dir; }; 
@@ -78,7 +76,7 @@ bidiweb.get_direction = function(text, guesstimate)
 /**
     @notes: assumes `word` is already setup properly
  */
-bidiweb.get_word_dir = function(word) {
+module.get_word_dir = function(word) {
     // stolen from google's i18n.bidi
     // regexes to identify ltr and rtl characters
     // TODO: check if CJK are included as ltr or no?
@@ -126,7 +124,7 @@ bidiweb.get_word_dir = function(word) {
     @param set_align: optional. When using the inline method, should we also
         set the text-align attribute? defaults to `true`
  */
-bidiweb.fix_dir = function (options) {
+module.fix_dir = function (options) {
     // allow the user to just pass the container and count on the defaults
     if(typeof options === 'string'){
         options = {'container': options}
@@ -151,7 +149,7 @@ bidiweb.fix_dir = function (options) {
 
     function j_fix_dir_inline() {
         var e = jQuery(this); // element
-        var dir = bidiweb.get_direction(e.text(), options.use_guesstimate);
+        var dir = module.get_direction(e.text(), options.use_guesstimate);
         var map = { 
             'L': 'ltr',
             'R': 'rtl',
@@ -185,7 +183,7 @@ bidiweb.fix_dir = function (options) {
 
     function j_fix_dir_by_class() {
         var e = jQuery(this); // element
-        var dir = bidiweb.get_direction(e.text(), options.use_guesstimate);
+        var dir = module.get_direction(e.text(), options.use_guesstimate);
         var map = {'L': options.ltr_class, 'R': options.rtl_class};
         if(!(dir in map)) return;
         e.addClass(map[dir]);
@@ -207,3 +205,5 @@ bidiweb.fix_dir = function (options) {
     elements.each(map[options.method])
 }
 
+return module;
+})();
