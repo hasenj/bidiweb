@@ -94,7 +94,7 @@ module.get_direction = function(text, guesstimate)
 
     // should be really the same as dirs because we already filtered out
     // things that are not words!
-    var X = 10;
+    var X = 100;
     var hard_dirs = dirs.filter(is_non_neutral_dir).slice(0, X);
 
     if (hard_dirs.length == 0) { return 'N'; }
@@ -104,7 +104,7 @@ module.get_direction = function(text, guesstimate)
         return candidate;
     }
 
-    var DIR_COUNT_THRESHOLD = 6;
+    var DIR_COUNT_THRESHOLD = 10;
     if (hard_dirs.length < DIR_COUNT_THRESHOLD) return candidate;
 
     var cand_words = hard_dirs.filter(func_same_direction(candidate));
@@ -148,6 +148,21 @@ module.get_word_dir = function(word) {
     }
 }
 
+var clean_css = function(element) {
+    // element should be a single element, not many elements ..
+    element = jQuery(element);
+    var clean_prop = function(e, prop) {
+        if(e.css(prop) == e.parent().css(prop)) {
+            e.css(prop, '');
+        }
+    }
+    clean_prop(element, 'direction');
+    clean_prop(element, 'text-align');
+    if(element.attr('style') == '') {
+        element.removeAttr('style');
+    }
+}
+
 /**
     High Level API 
 
@@ -173,15 +188,15 @@ module.get_word_dir = function(word) {
     @param set_align: optional. When using the inline method, should we also
         set the text-align attribute? defaults to `true`
  */
-module.fix_dir = function (options) {
+module.process = function (options) {
     // allow the user to just pass the container and count on the defaults
-    if(typeof options === 'string'){
+    if(options.container == null){
         options = {'container': options}
     }
 
     var default_options = {
         'container': '.content',
-        'elements': 'h1, h2, h3, p, ul, ol, blockquote',
+        'elements': 'h1, h2, h3, p, ul, ol, blockquote, div, span',
         'extra_elements': null,
         'rtl_class': 'rtl',
         'ltr_class': 'ltr',
@@ -196,12 +211,12 @@ module.fix_dir = function (options) {
         if (!(key in options)) options[key] = default_options[key];
     }
 
-    function j_fix_dir_inline() {
+    function jq_process_inline() {
         var e = jQuery(this); // element
         var dir = module.get_direction(e.text(), options.use_guesstimate);
         var map = { 
             'L': 'ltr',
-            'R': 'rtl',
+            'R': 'rtl'
             }
         if(!(dir in map)) return;
         e.css('direction', map[dir]);
@@ -210,26 +225,10 @@ module.fix_dir = function (options) {
             // so by default, set_aligh is set to false
             e.css('text-align', 'start');
         }
-        var clean_css = function() {
-            var e = $(this);
-            var clean_prop = function(e, prop) {
-                if(e.css(prop) == e.parent().css(prop)) {
-                    e.css(prop, '');
-                }
-            }
-            clean_prop(e, 'direction');
-            clean_prop(e, 'text-align');
-            if(e.attr('style') == '') {
-                e.removeAttr('style');
-            }
-        }
-        if(options.clean) {
-            e.each(clean_css); // must be called on each element individually .. even though e here is one element, but still do it this way
-        }
 
     }
 
-    function j_fix_dir_by_class() {
+    function jq_process_to_class() {
         var e = jQuery(this); // element
         var dir = module.get_direction(e.text(), options.use_guesstimate);
         var map = {'L': options.ltr_class, 'R': options.rtl_class};
@@ -238,16 +237,21 @@ module.fix_dir = function (options) {
     }
 
     var container = jQuery(options.container);
-    var elements = container.find(options.elements);
+    var elements = container.add(container.find(options.elements)); // add creates a new object; doesn't mutate container
     if(options.extra_elements) {
         elements = elements.add(container.find(options.extra_elements));
     }
-    var map = {'inline': j_fix_dir_inline, 'class': j_fix_dir_by_class};
+    var map = {'inline': jq_process_inline, 'class': jq_process_to_class};
     if (!(options.method in map)) {
         console.log("Warning: autobidi: the specified method is invalid: " + method);
         options.method = default_options.method;
     }
     elements.each(map[options.method])
+    if(options.clean) {
+        elements.each(function(index, element){
+            clean_css(element);
+        });
+    }
 }
 
 return module;

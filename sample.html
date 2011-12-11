@@ -2,7 +2,8 @@
 <script type="text/javascript" src="autobidi.js"> </script>
 <script type="text/javascript">
 jQuery(document).ready( function(){
-    bidiweb.fix_dir({container: '#content', use_guesstimate: true});
+    bidiweb.process({container: '#content', use_guesstimate: true});
+    bidiweb.process("#direct");
     jQuery('body').show();
     });
 </script>
@@ -26,9 +27,13 @@ jQuery(document).ready( function(){
     rtl/ltr sign </p>
 
 </div>
+
+<div id="direct" class="p">
+    نص عربي مستقل ليس داخل باراگراف
+</div>
   
 <style type="text/css">
-p { 
+p, .p { 
     background-color: hsl(120, 16%, 88%);
     color: 333;
     padding: 6px 12px;
