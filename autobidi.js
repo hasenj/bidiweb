@@ -128,7 +128,6 @@ module.get_direction = function(text, guesstimate)
 module.get_word_dir = function(word) {
     // stolen from google's i18n.bidi
     // regexes to identify ltr and rtl characters
-    // TODO: check if CJK are included as ltr or no?
     var ltr_re_ =
         'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF' +
         '\u2C00-\uFB1C\uFE00-\uFE6F\uFEFD-\uFFFF';

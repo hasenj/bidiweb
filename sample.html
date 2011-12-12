@@ -1,20 +1,41 @@
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"> </script>
-<script type="text/javascript" src="autobidi.js"> </script>
-<script type="text/javascript">
-jQuery(document).ready( function(){
-    bidiweb.process({container: '#content', use_guesstimate: true});
-    bidiweb.process("#direct");
-    jQuery('body').show();
-    });
-</script>
+<html>
+    <head>
+        <title>autobidi test</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"> </script>
+        <script type="text/javascript" src="autobidi.js"> </script>
+        <script type="text/javascript">
+        jQuery(document).ready( function(){
+            bidiweb.process({container: '.content', use_guesstimate: true});
+            bidiweb.process("#direct");
+            jQuery('body').show();
+            });
+        </script>
+        <style type="text/css">
+        p, .p { 
+            background-color: hsl(120, 16%, 88%);
+            color: 333;
+            padding: 6px 12px;
+            border-radius: 3px
+        }
+        div {
+            width: 600px; 
+            margin: 20px auto;
+            border: 1px solid silver;
+            padding: 12px 20px;
+        }
+        </style>
+
+    </head>
+    <body>
 <style type="text/css"> body { display: none; } </style>
 
-
-<div id="content" style="width: 600px; margin: 10px 200px;">
+<div class="content">
 
     <h1> Heading </h1>
     <h1> عنوان </h1>
+</div>
 
+<div class="content">
     <p> This is an english paragraph </p>
 
     <p> هذه فقرة عربية </p>
@@ -26,18 +47,27 @@ jQuery(document).ready( function(){
     <p> TODO: insert here some paragraphs that start with an explicit (invisible)
     rtl/ltr sign </p>
 
+    <p>זהו טקסט לדוגמה עברית</p>
+
 </div>
 
-<div id="direct" class="p">
-    نص عربي مستقل ليس داخل باراگراف
+<div>
+    <p id="direct">معالجة عنصر مباشرة</p>
 </div>
+
+<span style="direction: rtl">
+<div class="content">
+
+    <p>هذا الجزء من اليمين الى اليسار باي ديفولت</p>
+
+    <p>By default, this container is RTL</p>
+
+    <p>これは日本語の文です。</p>
+
+    <p>이것은 한국의 문장입니다.</p>
+
+</div>
+</span>
   
-<style type="text/css">
-p, .p { 
-    background-color: hsl(120, 16%, 88%);
-    color: 333;
-    padding: 6px 12px;
-    border-radius: 3px
-}
-</style>
-
+</body>
+</html>
