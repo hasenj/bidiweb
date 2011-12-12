@@ -1,4 +1,16 @@
+/**
+    (c) 2011 Hasen el Judy
+    bidiweb is freedly distributed under the MIT license
+  
+    Basic usage:
+    Call `bidiweb.process(element)` to automatically detect RTL
+    paragraphs/segments inside element and apply `direction:rtl` to them.
+    `element` can be anything that is passed to `jQuery()`
+*/
+
+
 // Fill in missing functions (for IE)
+// This code was taken from the mozilla (MDN) wiki
 if (!Array.prototype.filter)
 {
   Array.prototype.filter = function(fun /*, thisp*/)
@@ -42,6 +54,7 @@ if (!Array.prototype.map)
     return res;
   };
 }
+// end of mozilla's MDN wiki code
 
 if (typeof console === 'undefined') {
   console = { 'log': function() {} };
@@ -51,6 +64,8 @@ bidiweb = (function(){
 var module = {};
 
 /**
+    bidiweb.get_direction(text[, use_guesstimate])
+
     Input: raw text
     Output: The base direction of the paragraph
 
@@ -122,12 +137,9 @@ module.get_direction = function(text, guesstimate)
     }
 }
 
-/**
-    @notes: assumes `word` is already setup properly
- */
 module.get_word_dir = function(word) {
-    // stolen from google's i18n.bidi
     // regexes to identify ltr and rtl characters
+    // stolen from google's i18n.bidi
     var ltr_re_ =
         'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF' +
         '\u2C00-\uFB1C\uFE00-\uFE6F\uFEFD-\uFFFF';
@@ -145,6 +157,29 @@ module.get_word_dir = function(word) {
     } else {
         return 'N';
     }
+}
+
+function process_inline(e, settings) {
+    var dir = module.get_direction(e.text(), settings.use_guesstimate);
+    var map = { 
+        'L': 'ltr',
+        'R': 'rtl'
+        }
+    if(!(dir in map)) return;
+    e.css('direction', map[dir]);
+    if(settings.set_align) {
+        // we might have problems with cleaning after-wards ..
+        // so by default, set_aligh is set to false
+        e.css('text-align', 'start');
+    }
+
+}
+
+function process_to_class(e, settings) {
+    var dir = module.get_direction(e.text(), settings.use_guesstimate);
+    var map = {'L': settings.ltr_class, 'R': settings.rtl_class};
+    if(!(dir in map)) return;
+    e.addClass(map[dir]);
 }
 
 var clean_css = function(element) {
@@ -168,33 +203,36 @@ var clean_css = function(element) {
     Fix the direction for a given set of elements
 
     Requires jQuery
+    
+    Usage:
 
-    @param container: jQuery query that finds container elements; i.e. input to
-        jQuery(...): either a string or a jQuery object
-    @param elements: optional: a query to find elements that we want to fix.
-        The default is: 'h1, h2, h3, p, ul, ol, blockquote'
-    @param extra_elements: optional: if you don't want to replace the default
-        elements, you can specify extra elements that you want to process
-    @param method: optional, one of 'inline' or 'class' (defaults to inline)
-    @param ltr_class: if you choose 'class' for the method, this is the class
-        name that will be added to elements which are detected to be LTR;
-        defaults to 'ltr'
-    @param rtl_class: if you choose 'class' for the method, this is the class
-        name that will be added to elements which are detected to be RTL;
-        defaults to 'rtl'
-    @param clean: don't put extra attributes that are not needed
-        For example, if the parent element is already LTR, there's no need to clutter the html/dom with extra css properties
-    @param set_align: optional. When using the inline method, should we also
-        set the text-align attribute? defaults to `true`
+    bidiweb.process(node)
+    bidiweb.process(node, settings)
+
+    `node` can be a text query like '.content', an dom-node object, or a jquery object. Generally, any object that can be passed to jQuery.
+
+    `settings` is optional, if supplied, it must be a dictionary. The following keys are recognized, all of which are optional:
+
+        elements: a query to find elements that we want to fix.
+            The default is: 'h1, h2, h3, p, ul, ol, blockquote, div, span'
+        extra_elements: if you don't want to replace the default
+            elements, you can specify extra elements that you want to process
+        method: one of 'inline' or 'class' (defaults to inline)
+        ltr_class: if you choose 'class' for the method, this is the class
+            name that will be added to elements which are detected to be LTR;
+            defaults to 'ltr'
+        rtl_class: if you choose 'class' for the method, this is the class
+            name that will be added to elements which are detected to be RTL;
+            defaults to 'rtl'
+        set_align: When using the inline method, should we also
+            set the text-align attribute? off by default.
+        clean: don't put extra attributes that are not needed. on by default.
+            For example, if the parent element is already LTR, there's no need to clutter the html/dom with extra css properties
  */
-module.process = function (options) {
-    // allow the user to just pass the container and count on the defaults
-    if(options.container == null){
-        options = {'container': options}
-    }
+module.process = function (node, settings) {
+    if (settings == null) settings = {};
 
-    var default_options = {
-        'container': '.content',
+    var default_settings = {
         'elements': 'h1, h2, h3, p, ul, ol, blockquote, div, span',
         'extra_elements': null,
         'rtl_class': 'rtl',
@@ -205,48 +243,30 @@ module.process = function (options) {
         'set_align': false,
         }
 
-    // use default options
-    for(key in default_options) {
-        if (!(key in options)) options[key] = default_options[key];
+    // use default settings
+    for(key in default_settings) {
+        if (!(key in settings)) settings[key] = default_settings[key];
     }
 
-    function jq_process_inline() {
-        var e = jQuery(this); // element
-        var dir = module.get_direction(e.text(), options.use_guesstimate);
-        var map = { 
-            'L': 'ltr',
-            'R': 'rtl'
-            }
-        if(!(dir in map)) return;
-        e.css('direction', map[dir]);
-        if(options.set_align) {
-            // we might have problems with cleaning after-wards ..
-            // so by default, set_aligh is set to false
-            e.css('text-align', 'start');
-        }
-
+    var container = jQuery(node);
+    var elements = container.add(container.find(settings.elements)); // add creates a new object; doesn't mutate container
+    if(settings.extra_elements) {
+        elements = elements.add(container.find(settings.extra_elements));
     }
 
-    function jq_process_to_class() {
-        var e = jQuery(this); // element
-        var dir = module.get_direction(e.text(), options.use_guesstimate);
-        var map = {'L': options.ltr_class, 'R': options.rtl_class};
-        if(!(dir in map)) return;
-        e.addClass(map[dir]);
-    }
-
-    var container = jQuery(options.container);
-    var elements = container.add(container.find(options.elements)); // add creates a new object; doesn't mutate container
-    if(options.extra_elements) {
-        elements = elements.add(container.find(options.extra_elements));
-    }
-    var map = {'inline': jq_process_inline, 'class': jq_process_to_class};
-    if (!(options.method in map)) {
+    var method_map = {'inline': process_inline, 'class': process_to_class};
+    if (!(settings.method in method_map)) {
         console.log("Warning: autobidi: the specified method is invalid: " + method);
-        options.method = default_options.method;
+        settings.method = default_settings.method;
     }
-    elements.each(map[options.method])
-    if(options.clean) {
+    var process_fn = method_map[settings.method];
+
+    elements.each(function() {
+        var e = jQuery(this); // element
+        process_fn(e, settings);
+    });
+
+    if(settings.clean) {
         elements.each(function(index, element){
             clean_css(element);
         });
