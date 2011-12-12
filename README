@@ -1,0 +1,32 @@
+Introduction:
+-------------------
+
+Many web sites have an implicit assumption that text always runs from
+left-to-right. This is all fine and dandy as long as all your content is in
+English. However, if your webapp is a blog, or generally a platform that
+publishes user generated text content, this implicit assumption will cause
+problems and grief to users who want to publish content in Arabic, Hebrew,
+Persian, or another language that runs from right-to-left.
+
+Luckily the web has already solved the RTL problem; css provides `direction:
+rtl`, and all browsers support it. The problem comes when a webapp doesn't
+provide a way for users to specify that this or that paragraph should run from
+right-to-left. However, they shouldn't have to; it's easy enough for computers
+to do that for them. Detecting RTL laguages is a piece of cake, and so is
+applying the `direction: rtl` css attribute to any DOM element.
+
+This is what this project is for.
+
+I originally made this so I can use it on my tumblr blog.
+
+Basic Usage:
+--------------------
+
+Just call `bidiweb.process('.content')` and it will process all elements that
+have a "content" class.
+
+Instead of the text string '.content', you can pass a jQuery object, or
+browser-native node object, or generally anything that can be passed to
+`jQuery()`.
+
+Yes, jQuery is a pre-requisite.
