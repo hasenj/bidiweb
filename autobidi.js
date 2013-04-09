@@ -1,7 +1,7 @@
 /**
     (c) 2011 Hasen el Judy
     bidiweb is freedly distributed under the MIT license
-  
+
     Basic usage:
     Call `bidiweb.process(element)` to automatically detect RTL
     paragraphs/segments inside element and apply `direction:rtl` to them.
@@ -83,7 +83,7 @@ var module = {};
       return it as the base paragraph direction
     - Else, return D as the base paragraph direction
 
-    Notes: 
+    Notes:
        - An explicit unicode mark as the first character can be used to override
        this heuristic [NOT-YET]
        - We only return N if the paragraph doesn't seem to have any real words
@@ -94,15 +94,15 @@ module.get_direction = function(text, guesstimate)
 
     // TODO: check first character is a unicode dir character!
     var is_word = function(word) {
-        return word.length > 0; // && word.match(/\w+/) 
+        return word.length > 0; // && word.match(/\w+/)
         // wops! \w only matches ascii characters :(
     }
     var words = text.split(' ').filter(is_word);
 
     var dirs = words.map(module.get_word_dir);
 
-    var func_same_direction = function(dir) { 
-        return function(d) { return d == dir; }; 
+    var func_same_direction = function(dir) {
+        return function(d) { return d == dir; };
     }
     var is_non_neutral_dir = function(d) { return d != 'N'; };
     var other_direction = function(dir) { return {'L':'R', 'R':'L'}[dir]; };
@@ -161,7 +161,7 @@ module.get_word_dir = function(word) {
 
 function process_inline(e, settings) {
     var dir = module.get_direction(e.text(), settings.use_guesstimate);
-    var map = { 
+    var map = {
         'L': 'ltr',
         'R': 'rtl'
         }
@@ -198,12 +198,12 @@ var clean_css = function(element) {
 }
 
 /**
-    High Level API 
+    High Level API
 
     Fix the direction for a given set of elements
 
     Requires jQuery
-    
+
     Usage:
 
     bidiweb.process(node)
