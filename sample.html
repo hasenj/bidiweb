@@ -1,15 +1,13 @@
+﻿<!doctype html>
 <html>
     <head>
         <title>autobidi test</title>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"> </script>
-        <script type="text/javascript" src="bidi.js"> </script>
-        <script type="text/javascript" src="autobidi.js"> </script>
+        <script type="text/javascript" src="bidiweb.js"> </script>
         <script type="text/javascript">
-        jQuery(document).ready( function(){
+        document.addEventListener("DOMContentLoaded", function() {
             bidiweb.process_css('.content > *', {rtl: 'rtl', ltr: 'ltr'});
             bidiweb.process_style(".direct");
-            jQuery('body').show();
-            });
+        });
         </script>
         <style type="text/css">
         p, .p {
@@ -40,28 +38,17 @@
 
     </head>
     <body>
-        <style type="text/css"> body { display: none; } </style>
-
         <div class="content">
-
             <h1> Heading </h1>
             <h1> عنوان </h1>
         </div>
 
         <div class="content">
             <p> This is an english paragraph </p>
-
             <p> هذه فقرة عربية </p>
-
             <p> git هو نظام سورس كونترول. لاحظ ان هذه فقرة عربية مع انها تبدأ بكلمة انكليزية</p>
-
             <p> ع is a letter that doesn't exist in english. Note how this is an english paragraph even though it starts with an arabic letter </p>
-
-            <p> TODO: insert here some paragraphs that start with an explicit (invisible)
-            rtl/ltr sign </p>
-
             <p>זהו טקסט לדוגמה עברית</p>
-
         </div>
 
         <div>
@@ -71,17 +58,11 @@
 
         <span style="direction: rtl">
             <div class="content">
-
                 <p>هذا الجزء من اليمين الى اليسار باي ديفولت</p>
-
                 <p>By default, this container is RTL</p>
-
                 <p>これは日本語の文です。</p>
-
                 <p>이것은 한국의 문장입니다.</p>
-
             </div>
         </span>
-
     </body>
 </html>

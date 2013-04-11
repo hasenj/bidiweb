@@ -1,16 +1,55 @@
 /**
-    (c) 2011 Hasen el Judy
-    bidiweb is freedly distributed under the MIT license
+    Hasen el Judy
 
-    Basic usage:
-    Call `bidiweb.process(element)` to automatically detect RTL
-    paragraphs/segments inside element and apply `direction:rtl` to them.
-    `element` can be anything that is passed to `jQuery()`
+    Automatically set the direction of paragraphs in RTL languages.
+
+    The simplest way to use this module is to call:
+
+        bidiweb.doit(query)
+
+    Where `query` is a selector string that will be passed to
+    document.querySelectorAll.  Any element maching this query will have its
+    text content inspected, and the 'direction' and 'text-align' attributes
+    will be set according to whether the text in this element is RTL or LTR.
+
+    The following will fix the direction of all elements inside
+    '.content'
+
+        bidiweb.doit('.content *');
+
+    `doit` is actually a convenience function that calls `bidiweb.process_style`,
+    which is itself a convenience function that calls `bidiweb.process`.
+
+    The `process` function takes a selection query string and a processor. A
+    processor is a function that knows how to "fix" a certain element to make
+    it RTL or LTR.
+
+    The reason we have a processor object is that there are different ways of
+    processing an element:
+
+    - Setting the values for the 'direction' and 'text-align' attributes
+      directly.
+
+    - Set only the direction, but not the text-align.
+
+      Sometimes text alignment is part of the design and not related to the
+      direction of the text. It's not uncommon for English text to be
+      right-aligned or for Arabic text to be left-aligned.
+
+    - Giving the element a css class that takes care of these attributes, along
+      with other attributes.
+
+      Perhaps the direction is not the only thing you want to change for RTL
+      paragraphs. Maybe you want to use a different font, or change their size
+      or color, or any number of things; depending on what's required by the
+      design.
+
+    If you don't care about any of that and just want to fix the paragraphs
+    inside a specific container, just call do it with '.container *'
+
+    This has not been tested on IE.
 */
 
-if (typeof console === 'undefined') {
-  console = { 'log': function() {} };
-}
 // namespace
 bidiweb = (function(){
 var module = {};
@@ -27,10 +66,10 @@ IProcessor = {
 var css_processor = function(classes) {
     return {
         makeRtl: function(element) {
-            element.className += classes.rtl;
+            element.className += " " + classes.rtl;
         },
         makeLtr: function(element) {
-            element.className += classes.ltr;
+            element.className += " " + classes.ltr;
         }
     }
 }
@@ -105,6 +144,13 @@ module.process_css = function(query, classes) {
 module.process_style = function(query, falign) {
     var proc = module.processors.style(falign);
     module.process(query, proc);
+}
+
+/**
+    The simplest and most straight forward interface: just fix the given elements using the style processor
+ */
+module.doit = function(query) {
+    module.process_style(query, true);
 }
 
 return module;

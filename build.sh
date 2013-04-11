@@ -1,1 +1,1 @@
-cat bidi.js autobidi.js | jsmin > bidifix.js
+cat bidi.js proc.js | jsmin > bidiweb.js
