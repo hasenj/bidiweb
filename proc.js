@@ -151,10 +151,19 @@ module.process_style = function(query, falign) {
 }
 
 /**
-    The simplest and most straight forward interface: just fix the given elements using the style processor
+    The simplest and most straight forward interface: just fix the given
+    elements using the style processor
  */
 module.doit = function(query) {
     module.process_style(query, true);
+}
+
+/**
+    The second simplest way to do it: just like do it, but instead of fixing
+    the style attributes, apply css classes 'rtl' or 'ltr'
+ */
+module.doit_css = function(query) {
+    module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
 }
 
 return module;

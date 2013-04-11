@@ -44,13 +44,29 @@ processing an element:
 If you don't care about any of that and just want to fix the paragraphs
 inside a specific container, just call do it with '.container *'
 
+    bidiweb.doit('.container *')
+
+If you want more flexibility with less compleity, you can call `doit_css` which will use css classes 'rtl' and 'ltr'.
+
+    bidiweb.doit_css('.container *')
+
+This way you get more control. You can restrict certain elements from being right-aligned via css, like this for example:
+
+    h3.title.rtl {
+        text-align: left;
+    }
+
+This should be more than enough for 99% of use cases.
+
+### Notes
+
 Does not depend on jQuery or any other library.
 
 Not tested on IE and not developed for it. If it works on IE, it's by accident.
 
 ### License
 
-bidi.js is licensed under tje MIT license.
+bidi.js is licensed under the MIT license.
 
 proc.js is licensed under the WTFPL.
 
