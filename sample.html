@@ -2,26 +2,39 @@
     <head>
         <title>autobidi test</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"> </script>
+        <script type="text/javascript" src="bidi.js"> </script>
         <script type="text/javascript" src="autobidi.js"> </script>
         <script type="text/javascript">
         jQuery(document).ready( function(){
-            bidiweb.process('.content', {use_guesstimate: true});
-            bidiweb.process("#direct");
+            bidiweb.process_css('.content > *', {rtl: 'rtl', ltr: 'ltr'});
+            bidiweb.process_style(".direct");
             jQuery('body').show();
             });
         </script>
         <style type="text/css">
-        p, .p { 
+        p, .p {
             background-color: hsl(120, 16%, 88%);
             color: 333;
             padding: 6px 12px;
             border-radius: 3px
         }
         div {
-            width: 600px; 
+            width: 600px;
             margin: 20px auto;
             border: 1px solid silver;
             padding: 12px 20px;
+        }
+
+        .ltr {
+            text-align: left;
+            direction: ltr;
+            background-color: hsl(0, 50%, 90%);
+        }
+
+        .rtl {
+            text-align: right;
+            direction: rtl;
+            background-color: hsl(200, 50%, 90%);
         }
         </style>
 
@@ -40,9 +53,9 @@
 
     <p> هذه فقرة عربية </p>
 
-    <p> git هو نظام سورس كونترول. لاحظ ان هذه فقرة عربية مع انها تبدأ بكلمة انكليزية</p>
+    <p> &rlm;git هو نظام سورس كونترول. لاحظ ان هذه فقرة عربية مع انها تبدأ بكلمة انكليزية</p>
 
-    <p> ع is a letter that doesn't exist in english. Note how this is an english paragraph even though it starts with an arabic letter </p>
+    <p> &lrm;ع is a letter that doesn't exist in english. Note how this is an english paragraph even though it starts with an arabic letter </p>
 
     <p> TODO: insert here some paragraphs that start with an explicit (invisible)
     rtl/ltr sign </p>
@@ -52,7 +65,8 @@
 </div>
 
 <div>
-    <p id="direct">معالجة عنصر مباشرة</p>
+    <p class="direct">معالجة عنصر مباشرة</p>
+    <p class="direct">inline style processing</p>
 </div>
 
 <span style="direction: rtl">
@@ -68,6 +82,6 @@
 
 </div>
 </span>
-  
+
 </body>
 </html>
