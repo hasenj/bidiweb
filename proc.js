@@ -21,7 +21,7 @@
     which is itself a convenience function that calls `bidiweb.process`.
 
     The `process` function takes a selection query string and a processor. A
-    processor is a function that knows how to "fix" a certain element to make
+    processor is an object that knows how to "fix" a certain element to make
     it RTL or LTR.
 
     The reason we have a processor object is that there are different ways of
@@ -47,7 +47,11 @@
     If you don't care about any of that and just want to fix the paragraphs
     inside a specific container, just call do it with '.container *'
 
-    This has not been tested on IE.
+    Does not depend on jQuery or any other library.
+
+    Not tested on IE and not developed for it. If it works on IE, it's by accident.
+
+    This file is licensed under the WTFPL.
 */
 
 // namespace
