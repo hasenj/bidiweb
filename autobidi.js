@@ -74,9 +74,10 @@ module.process = function (query, processor) {
     for (var index = 0; index < elements.length; index++) {
         var element = elements.item(index);
         var text = element.textContent;
-        if(bidi.isRtlText(text)) {
+        var dir = bidi.estimateDirection(text, 0.4);
+        if(dir == bidi.Dir.RTL) {
             processor.makeRtl(element);
-        } else if(bidi.isLtrText(text)) {
+        } else if(dir == bidi.Dir.LTR) {
             processor.makeLtr(element);
         }
     };
