@@ -66,7 +66,7 @@ Not tested on IE and not developed for it. If it works on IE, it's by accident.
 
 ### License
 
-bidi.js is licensed under the MIT license.
+bidi.js is licensed under the Apache license.
 
 proc.js is licensed under the WTFPL.
 
