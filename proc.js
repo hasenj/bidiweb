@@ -113,6 +113,8 @@ module.processors = {
     `processor` is an object that conforms to the processor interface; namely it must provide:
         makeRtl(element)
         makeLtr(element)
+
+    @returns the processed elements
  */
 module.process = function (query, processor) {
     var elements;
@@ -122,6 +124,7 @@ module.process = function (query, processor) {
         elements = document.querySelectorAll(query);
     }
     module.process_elements(elements, processor);
+    return elements;
 }
 
 /**
@@ -156,7 +159,7 @@ module.process_elements = function(elements, processor) {
  */
 module.process_css = function(query, classes) {
     var proc = module.processors.css(classes);
-    module.process(query, proc);
+    return module.process(query, proc);
 }
 
 /**
@@ -170,7 +173,7 @@ module.process_css = function(query, classes) {
  */
 module.process_style = function(query, falign) {
     var proc = module.processors.style(falign);
-    module.process(query, proc);
+    return module.process(query, proc);
 }
 
 /**
@@ -178,7 +181,7 @@ module.process_style = function(query, falign) {
     elements using the style processor
  */
 module.style = function(query) {
-    module.process_style(query, true);
+    return module.process_style(query, true);
 }
 
 /**
@@ -186,7 +189,7 @@ module.style = function(query) {
     the style attributes, apply css classes 'rtl' or 'ltr'
  */
 module.css = function(query) {
-    module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
+    return module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
 }
 
 // helper
