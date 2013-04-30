@@ -2,7 +2,7 @@ Automatically set the direction of paragraphs in RTL languages.
 
 The simplest way to use this module is to call:
 
-    bidiweb.doit(query)
+    bidiweb.style(query)
 
 Where `query` is a selector string that will be passed to
 document.querySelectorAll.  Any element maching this query will have its
@@ -12,9 +12,9 @@ will be set according to whether the text in this element is RTL or LTR.
 The following will fix the direction of all elements inside
 '.content'
 
-    bidiweb.doit('.content *');
+    bidiweb.style('.content *');
 
-`doit` is actually a convenience function that calls `bidiweb.process_style`,
+`style` is actually a convenience function that calls `bidiweb.process_style`,
 which is itself a convenience function that calls `bidiweb.process`.
 
 The `process` function takes a selection query string and a processor. A
@@ -44,11 +44,11 @@ processing an element:
 If you don't care about any of that and just want to fix the paragraphs
 inside a specific container, just call do it with '.container *'
 
-    bidiweb.doit('.container *')
+    bidiweb.style('.container *')
 
-If you want more flexibility with less compleity, you can call `doit_css` which will use css classes 'rtl' and 'ltr'.
+If you want more flexibility with less compleity, you can call `css` which will use css classes 'rtl' and 'ltr'.
 
-    bidiweb.doit_css('.container *')
+    bidiweb.css('.container *')
 
 This way you get more control. You can restrict certain elements from being right-aligned via css, like this for example:
 
@@ -74,4 +74,4 @@ proc.js is licensed under the WTFPL.
 
 run `./build.sh`, it will output to 'bidiweb.js' which you can include in any html page.
 
-See example.html 
+See example.html

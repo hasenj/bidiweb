@@ -5,7 +5,7 @@
 
     The simplest way to use this module is to call:
 
-        bidiweb.doit(query)
+        bidiweb.style(query)
 
     Where `query` is a selector string that will be passed to
     document.querySelectorAll.  Any element maching this query will have its
@@ -15,9 +15,9 @@
     The following will fix the direction of all elements inside
     '.content'
 
-        bidiweb.doit('.content *');
+        bidiweb.style('.content *');
 
-    `doit` is actually a convenience function that calls `bidiweb.process_style`,
+    `style` is actually a convenience function that calls `bidiweb.process_style`,
     which is itself a convenience function that calls `bidiweb.process`.
 
     The `process` function takes a selection query string and a processor. A
@@ -154,7 +154,7 @@ module.process_style = function(query, falign) {
     The simplest and most straight forward interface: just fix the given
     elements using the style processor
  */
-module.doit = function(query) {
+module.style = function(query) {
     module.process_style(query, true);
 }
 
@@ -162,7 +162,7 @@ module.doit = function(query) {
     The second simplest way to do it: just like do it, but instead of fixing
     the style attributes, apply css classes 'rtl' or 'ltr'
  */
-module.doit_css = function(query) {
+module.css = function(query) {
     module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
 }
 
