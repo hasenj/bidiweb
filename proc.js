@@ -106,14 +106,37 @@ module.processors = {
 /**
     Fix the directionality of elements matching `query` using the processor `processor`.
 
-    `query` must conform to the selector api, as we use document.selectQueryAll() instead of jQuery.
+    `query` must conform to the selector api, as we use document.selectQueryAll(), and not jQuery.
+
+    `query` may also be a NodeList
 
     `processor` is an object that conforms to the processor interface; namely it must provide:
         makeRtl(element)
         makeLtr(element)
  */
 module.process = function (query, processor) {
-    elements = document.querySelectorAll(query);
+    var elements;
+    if(query instanceof NodeList) {
+        elements = query;
+    } else {
+        elements = document.querySelectorAll(query);
+    }
+    module.process_elements(elements, processor);
+}
+
+/**
+    Lowest level core
+
+    Fix the directionality of given elements using the processor `processor`.
+
+    `elements` must be a NodeList
+        see https://developer.mozilla.org/en-US/docs/DOM/NodeList
+
+    `processor` is an object that conforms to the processor interface; namely it must provide:
+        makeRtl(element)
+        makeLtr(element)
+ */
+module.process_elements = function(elements, processor) {
     for (var index = 0; index < elements.length; index++) {
         var element = elements.item(index);
         var text = element.textContent;
@@ -164,6 +187,13 @@ module.style = function(query) {
  */
 module.css = function(query) {
     module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
+}
+
+// helper
+module.htmlToNodeList = function(html) {
+    var container = document.createElement('div');
+    container.innerHTML = html;
+    return container.querySelectorAll('*');
 }
 
 return module;
