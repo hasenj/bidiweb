@@ -70,10 +70,10 @@ IProcessor = {
 var css_processor = function(classes) {
     return {
         makeRtl: function(element) {
-            element.className += " " + classes.rtl;
+            element.classList.add(classes.rtl);
         },
         makeLtr: function(element) {
-            element.className += " " + classes.ltr;
+            element.classList.add(classes.ltr);
         }
     }
 }
