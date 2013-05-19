@@ -192,21 +192,6 @@ module.css = function(query) {
     return module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
 }
 
-// helpers
-module.htmlToNodeList = function(html) {
-    var container = document.createElement('div');
-    container.innerHTML = html;
-    return container.querySelectorAll('*');
-}
-
-module.nodeListToHtml = function(nodeList) {
-    var container = document.createElement('div');
-    for(var i = 0; i < nodeList.length; i++) {
-        container.appendChild(nodeList.item(i));
-    }
-    return container.innerHTML;
-}
-
 /**
     Process html text, i.e. when you need to process stuff before inserting it into the DOM
 
@@ -215,9 +200,11 @@ module.nodeListToHtml = function(nodeList) {
     @returns: the html processed, with rtl/ltr tags added to elements.
  */
 module.html_css = function(html) {
-    var nodes = module.htmlToNodeList(html);
-    nodes = module.css(nodes);
-    return module.nodeListToHtml(nodes);
+    var container = document.createElement('div');
+    container.innerHTML = html;
+    var nodes = container.querySelectorAll('*');
+    module.css(nodes);
+    return container.innerHTML;
 }
 
 return module;
