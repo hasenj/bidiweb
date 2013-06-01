@@ -103,12 +103,23 @@ module.processors = {
     style: style_processor
 }
 
+// take a node and wrap it in a NodeList like object
+var nodeListMock = function(node) {
+    var list = [node];
+    list.item = function(i) {
+        return list[i];
+    }
+    return list;
+}
+
 /**
     Fix the directionality of elements matching `query` using the processor `processor`.
 
     `query` must conform to the selector api, as we use document.selectQueryAll(), and not jQuery.
 
     `query` may also be a NodeList
+
+    `query` may also be a Node
 
     `processor` is an object that conforms to the processor interface; namely it must provide:
         makeRtl(element)
@@ -120,6 +131,8 @@ module.process = function (query, processor) {
     var elements;
     if(query instanceof NodeList) {
         elements = query;
+    } else if (query instanceof Node) {
+        elements = nodeListMock(query);
     } else {
         elements = document.querySelectorAll(query);
     }
@@ -142,7 +155,7 @@ module.process = function (query, processor) {
 module.process_elements = function(elements, processor) {
     for (var index = 0; index < elements.length; index++) {
         var element = elements.item(index);
-        var text = element.textContent;
+        var text = element.textContent || element.value || ""; // .value to support form elements
         var dir = bidi.estimateDirection(text, 0.4);
         if(dir == bidi.Dir.RTL) {
             processor.makeRtl(element);
