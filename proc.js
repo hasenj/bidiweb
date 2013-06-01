@@ -155,7 +155,10 @@ module.process = function (query, processor) {
 module.process_elements = function(elements, processor) {
     for (var index = 0; index < elements.length; index++) {
         var element = elements.item(index);
-        var text = element.textContent || element.value || ""; // .value to support form elements
+        // for normal elements, we get textContent
+        // for form fields, we get the value, then placeholder if value is empty
+        // and we put the last || "" so we never get a null or undefined
+        var text = element.textContent || element.value || element.placeholder || "";
         var dir = bidi.estimateDirection(text, 0.4);
         if(dir == bidi.Dir.RTL) {
             processor.makeRtl(element);
