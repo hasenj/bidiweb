@@ -192,6 +192,18 @@ module.css = function(query) {
     return module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
 }
 
+// helpers
+/**
+    Takes raw html and encapsulates it in a div
+
+    Helper
+ */
+module.htmlToElement = function(html) {
+    var container = document.createElement('div');
+    container.innerHTML = html;
+    return container
+}
+
 /**
     Process html text, i.e. when you need to process stuff before inserting it into the DOM
 
@@ -200,10 +212,23 @@ module.css = function(query) {
     @returns: the html processed, with rtl/ltr tags added to elements.
  */
 module.html_css = function(html) {
-    var container = document.createElement('div');
-    container.innerHTML = html;
+    var container = module.htmlToElement(html);
     var nodes = container.querySelectorAll('*');
     module.css(nodes);
+    return container.innerHTML;
+}
+
+/**
+    Process html text, i.e. when you need to process stuff before inserting it into the DOM
+
+    Note: all actual text must be inside html tags. Any text not inside a tag will be removed.
+
+    @returns: the html processed, with rtl/ltr tags added to elements.
+ */
+module.html_style = function(html) {
+    var container = module.htmlToElement(html);
+    var nodes = container.querySelectorAll('*');
+    module.style(nodes);
     return container.innerHTML;
 }
 
