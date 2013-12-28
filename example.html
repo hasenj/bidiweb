@@ -2,8 +2,7 @@
 <html>
     <head>
         <title>autobidi test</title>
-        <script type="text/javascript" src="bidi_helpers.js"> </script>
-        <script type="text/javascript" src="bidiweb.js"> </script>
+        <script type="text/javascript" src="bidiweb.build.js"> </script>
         <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
             bidiweb.process_css('.content > *', {rtl: 'rtl', ltr: 'ltr'});
@@ -11,14 +10,27 @@
         });
         </script>
         <style type="text/css">
-        p, .p {
-            background-color: hsl(120, 16%, 88%);
-            color: 333;
+        @import url(http://fonts.googleapis.com/earlyaccess/amiri.css);
+        @import url(http://fonts.googleapis.com/earlyaccess/droidarabickufi.css);
+        /* @import url(http://fonts.googleapis.com/earlyaccess/droidarabicnaskh.css); */
+
+        h1 {
+            font-family: Amiri, Georgia;
+            color: #333;
             padding: 6px 12px;
-            border-radius: 3px
+            border-radius: 6px;
+            font-size: 24pt;
+        }
+
+        p, .p {
+            background-color: hsl(120, 50%, 90%);
+            color: #333;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Droid Arabic Kufi', sans-serif;
         }
         div {
-            width: 600px;
+            width: 500px;
             margin: 20px auto;
             border: 1px solid silver;
             padding: 12px 20px;

@@ -1,3 +1,8 @@
+// bidi_helpers.js
+//
+// From http://closure-library.googlecode.com/svn-history/r27/trunk/closure/goog/docs/closure_goog_i18n_bidi.js.source.html
+// with modifications
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -10,8 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License
 
-// This stuff is taken from http://closure-library.googlecode.com/svn-history/r27/trunk/closure/goog/docs/closure_goog_i18n_bidi.js.source.html
-// with modifications
 
 
 
@@ -19,7 +22,7 @@
   // Support module loading scenarios
   if (typeof define === 'function' && define.amd){
     // AMD Anonymous Module
-    define(factory);
+    define('bidi_helpers', [], factory);
   } else {
     // No module loader (plain <script> tag) - put directly in global namespace
     window.bidi_helpers = factory();

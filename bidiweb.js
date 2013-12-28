@@ -1,4 +1,17 @@
-/**
+// bidiweb.js
+// Hasen el Judy
+// This file is licensed under the WTFPL.
+(function(factory){
+  // Support module loading scenarios
+  if (typeof define === 'function' && define.amd){
+    // AMD Anonymous Module
+    define('bidiweb', ['bidi_helpers'], factory);
+  } else {
+    // No module loader (plain <script> tag) - put directly in global namespace
+    window.bidiweb = factory(bidi_helpers);
+  }
+})(function(bidi_helpers){
+/*
     Hasen el Judy
 
     Automatically set the direction of paragraphs in RTL languages.
@@ -50,21 +63,8 @@
     Does not depend on jQuery or any other library.
 
     Not tested on IE and not developed for it. If it works on IE, it's by accident.
-
-    This file is licensed under the WTFPL.
 */
 
-// namespace
-(function(factory){
-  // Support module loading scenarios
-  if (typeof define === 'function' && define.amd){
-    // AMD Anonymous Module
-    define(['bidi_helpers'], factory);
-  } else {
-    // No module loader (plain <script> tag) - put directly in global namespace
-    window.bidiweb = factory(bidi_helpers);
-  }
-})(function(bidi_helpers){
 var module = {};
 
 // processor interface - for documentation purposes only
