@@ -13,13 +13,25 @@
 // This stuff is taken from http://closure-library.googlecode.com/svn-history/r27/trunk/closure/goog/docs/closure_goog_i18n_bidi.js.source.html
 // with modifications
 
-bidi = {}
+
+
+(function(factory){
+  // Support module loading scenarios
+  if (typeof define === 'function' && define.amd){
+    // AMD Anonymous Module
+    define(factory);
+  } else {
+    // No module loader (plain <script> tag) - put directly in global namespace
+    window.bidi_helpers = factory();
+  }
+})(function(){
+var module = {}
 
 /**
  * Directionality enum.
  * @enum {number}
  */
-bidi.Dir = {
+module.Dir = {
   RTL: -1,
   UNKNOWN: 0,
   LTR: 1
@@ -29,7 +41,7 @@ bidi.Dir = {
  * Unicode formatting characters and directionality string constants.
  * @enum {string}
  */
-bidi.Format = {
+module.Format = {
   /** Unicode "Left-To-Right Embedding" (LRE) character. */
   LRE: '\u202A',
   /** Unicode "Right-To-Left Embedding" (RLE) character. */
@@ -50,7 +62,7 @@ bidi.Format = {
  * @type {string}
  * @private
  */
-bidi.ltrChars_ =
+module.ltrChars_ =
     'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF' +
     '\u2C00-\uFB1C\uFE00-\uFE6F\uFEFD-\uFFFF';
 
@@ -62,7 +74,7 @@ bidi.ltrChars_ =
  * @type {string}
  * @private
  */
-bidi.rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC';
+module.rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC';
 
 /**
  * Regular expressions to check if a piece of text if of LTR directionality
@@ -70,23 +82,23 @@ bidi.rtlChars_ = '\u0591-\u07FF\uFB1D-\uFDFF\uFE70-\uFEFC';
  * @type {RegExp}
  * @private
  */
-bidi.ltrDirCheckRe_ = new RegExp(
-    '^[^' + bidi.rtlChars_ + ']*[' + bidi.ltrChars_ + ']');
+module.ltrDirCheckRe_ = new RegExp(
+    '^[^' + module.rtlChars_ + ']*[' + module.ltrChars_ + ']');
 
 /**
  * Regular expression to check for LTR characters.
  * @type {RegExp}
  * @private
  */
-bidi.ltrCharReg_ = new RegExp('[' + bidi.ltrChars_ + ']');
+module.ltrCharReg_ = new RegExp('[' + module.ltrChars_ + ']');
 
 /**
  * Test whether the given string has any LTR characters in it.
  * @param {string} text The given string that need to be tested.
  * @return {boolean} Whether the string contains LTR characters.
  */
-bidi.hasAnyLtr = function(text) {
-  return bidi.ltrCharReg_.test(text);
+module.hasAnyLtr = function(text) {
+  return module.ltrCharReg_.test(text);
 };
 
 
@@ -96,10 +108,10 @@ bidi.hasAnyLtr = function(text) {
  * @type {RegExp}
  * @private
  */
-bidi.rtlDirCheckRe_ = new RegExp(
-    '^[^' + bidi.ltrChars_ + ']*[' + bidi.rtlChars_ + ']');
+module.rtlDirCheckRe_ = new RegExp(
+    '^[^' + module.ltrChars_ + ']*[' + module.rtlChars_ + ']');
 
-bidi.rtlRe = bidi.rtlDirCheckRe_;
+module.rtlRe = module.rtlDirCheckRe_;
 
 
 /**
@@ -108,8 +120,8 @@ bidi.rtlRe = bidi.rtlDirCheckRe_;
  * @return {boolean} Whether RTL directionality is detected using the first
  *     strongly-directional character method.
  */
-bidi.isRtlText = function(text) {
-    return bidi.rtlDirCheckRe_.test(text);
+module.isRtlText = function(text) {
+    return module.rtlDirCheckRe_.test(text);
 }
 
 /**
@@ -118,8 +130,8 @@ bidi.isRtlText = function(text) {
  * @return {boolean} Whether LTR directionality is detected using the first
  *     strongly-directional character method.
  */
-bidi.isLtrText = function(text) {
-    return bidi.ltrDirCheckRe_.test(text);
+module.isLtrText = function(text) {
+    return module.ltrDirCheckRe_.test(text);
 }
 
 /**
@@ -130,7 +142,7 @@ bidi.isLtrText = function(text) {
  * @type {RegExp}
  * @private
  */
-bidi.isRequiredLtrRe_ = /^http:\/\/.*/;
+module.isRequiredLtrRe_ = /^http:\/\/.*/;
 
 /**
  * Regular expression to check if a string contains any numerals. Used to
@@ -139,7 +151,7 @@ bidi.isRequiredLtrRe_ = /^http:\/\/.*/;
  * @type {RegExp}
  * @private
  */
-bidi.hasNumeralsRe_ = /\d/;
+module.hasNumeralsRe_ = /\d/;
 
 /**
  * Estimates the directionality of a string based on relative word counts.
@@ -150,30 +162,32 @@ bidi.hasNumeralsRe_ = /\d/;
  * Numbers are counted as weakly LTR.
  * @param {string} text The string to be checked.
  * @param {number} detectionThreshold A number from 0 to 1 representing the percentage
- * @return {bidi.Dir} Estimated overall directionality of {@code str}.
+ * @return {module.Dir} Estimated overall directionality of {@code str}.
  */
-bidi.estimateDirection = function(text, detectionThreshold) {
+module.estimateDirection = function(text, detectionThreshold) {
   var rtlCount = 0;
   var totalCount = 0;
   var hasWeaklyLtr = false;
   var tokens = text.split(/\s+/);
   for (var i = 0; i < tokens.length; i++) {
     var token = tokens[i];
-    if (bidi.isRtlText(token)) {
+    if (module.isRtlText(token)) {
       rtlCount++;
       totalCount++;
-    } else if (bidi.isRequiredLtrRe_.test(token)) {
+    } else if (module.isRequiredLtrRe_.test(token)) {
       hasWeaklyLtr = true;
-    } else if (bidi.hasAnyLtr(token)) {
+    } else if (module.hasAnyLtr(token)) {
       totalCount++;
-    } else if (bidi.hasNumeralsRe_.test(token)) {
+    } else if (module.hasNumeralsRe_.test(token)) {
       hasWeaklyLtr = true;
     }
   }
 
   return totalCount == 0 ?
-      (hasWeaklyLtr ? bidi.Dir.LTR : bidi.Dir.UNKNOWN) :
+      (hasWeaklyLtr ? module.Dir.LTR : module.Dir.UNKNOWN) :
       (rtlCount / totalCount > detectionThreshold ?
-          bidi.Dir.RTL : bidi.Dir.LTR);
+          module.Dir.RTL : module.Dir.LTR);
 };
 
+  return module;
+});

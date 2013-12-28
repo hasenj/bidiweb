@@ -55,11 +55,20 @@
 */
 
 // namespace
-bidiweb = (function(){
+(function(factory){
+  // Support module loading scenarios
+  if (typeof define === 'function' && define.amd){
+    // AMD Anonymous Module
+    define(['bidi_helpers'], factory);
+  } else {
+    // No module loader (plain <script> tag) - put directly in global namespace
+    window.bidiweb = factory(bidi_helpers);
+  }
+})(function(bidi_helpers){
 var module = {};
 
 // processor interface - for documentation purposes only
-IProcessor = {
+var IProcessor = {
     makeRtl: function(element) { },
     makeLtr: function(element) { }
 }
@@ -159,10 +168,10 @@ module.process_elements = function(elements, processor) {
         // for form fields, we get the value, then placeholder if value is empty
         // and we put the last || "" so we never get a null or undefined
         var text = element.textContent || element.value || element.placeholder || "";
-        var dir = bidi.estimateDirection(text, 0.4);
-        if(dir == bidi.Dir.RTL) {
+        var dir = bidi_helpers.estimateDirection(text, 0.4);
+        if(dir == bidi_helpers.Dir.RTL) {
             processor.makeRtl(element);
-        } else if(dir == bidi.Dir.LTR) {
+        } else if(dir == bidi_helpers.Dir.LTR) {
             processor.makeLtr(element);
         }
     };
@@ -249,4 +258,4 @@ module.html_style = function(html) {
 }
 
 return module;
-})();
+})
