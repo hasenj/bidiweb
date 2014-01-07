@@ -89,18 +89,21 @@ Note that this function returns a string, not DOM nodes.
 
 ### Notes
 
-Does not depend on jQuery or any other library.
-
-Not tested on IE and not developed for it. If it works on IE, it's by accident.
+* Supports AMD via requirejs (optional)
+* Does not depend on jQuery or any other library.
+* Not tested on IE and not developed for it. If it works on IE, it's by accident.
 
 ### License
 
-bidi.js is licensed under the Apache license.
+bidi_helpers.js is licensed under the Apache license.
+bidiweb.js is licensed under the WTFPL.
 
-proc.js is licensed under the WTFPL.
-
-### Building
-
-run `./build.sh`, it will output to 'bidiweb.js' which you can include in any html page.
+### Usage
 
 See example.html
+
+Include "bidiweb.build.js"
+
+#### For AMD/requirejs:
+
+require bidiweb, and make sure bidi_helpers is available (bidiweb will require it).
