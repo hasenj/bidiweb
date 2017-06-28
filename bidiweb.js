@@ -1,16 +1,17 @@
 // bidiweb.js
 // Hasen el Judy
 // This file is licensed under the WTFPL.
-(function(factory){
+(function(factory) {
   // Support module loading scenarios
-  if (typeof define === 'function' && define.amd){
+  if (typeof define === 'function' && define.amd)
+  {
     // AMD Anonymous Module
     define('bidiweb', ['bidi_helpers'], factory);
   } else {
     // No module loader (plain <script> tag) - put directly in global namespace
     window.bidiweb = factory(bidi_helpers);
   }
-})(function(bidi_helpers){
+})(function(bidi_helpers) {
 /*
     Hasen el Judy
 
@@ -71,7 +72,7 @@ var module = {};
 var IProcessor = {
     makeRtl: function(element) { },
     makeLtr: function(element) { }
-}
+};
 
 // processor based on css classes
 // @param classes: a dictionary with 2 keys: 'rtl' and 'ltr', each specifying a css class to be used
@@ -84,8 +85,8 @@ var css_processor = function(classes) {
         makeLtr: function(element) {
             element.classList.add(classes.ltr);
         }
-    }
-}
+    };
+};
 
 // processor that changes the style inline
 // @param falign: a boolean indicating whether align is to be set
@@ -104,22 +105,22 @@ var style_processor = function(falign) {
                 element.style.textAlign = "left";
             }
         }
-    }
-}
+    };
+};
 
 module.processors = {
     css: css_processor,
     style: style_processor
-}
+};
 
 // take a node and wrap it in a NodeList like object
 var nodeListMock = function(node) {
     var list = [node];
     list.item = function(i) {
         return list[i];
-    }
+    };
     return list;
-}
+};
 
 /**
     Fix the directionality of elements matching `query` using the processor `processor`.
@@ -138,7 +139,8 @@ var nodeListMock = function(node) {
  */
 module.process = function (query, processor) {
     var elements;
-    if(query instanceof NodeList) {
+    if(query instanceof NodeList) 
+    {
         elements = query;
     } else if (query instanceof Node) {
         elements = nodeListMock(query);
@@ -147,7 +149,7 @@ module.process = function (query, processor) {
     }
     module.process_elements(elements, processor);
     return elements;
-}
+};
 
 /**
     Lowest level core
@@ -162,20 +164,22 @@ module.process = function (query, processor) {
         makeLtr(element)
  */
 module.process_elements = function(elements, processor) {
-    for (var index = 0; index < elements.length; index++) {
+    for (var index = 0; index < elements.length; index++) 
+    {
         var element = elements.item(index);
         // for normal elements, we get textContent
         // for form fields, we get the value, then placeholder if value is empty
         // and we put the last || "" so we never get a null or undefined
         var text = element.textContent || element.value || element.placeholder || "";
         var dir = bidi_helpers.estimateDirection(text, 0.4);
-        if(dir == bidi_helpers.Dir.RTL) {
+        if(dir == bidi_helpers.Dir.RTL) 
+	{
             processor.makeRtl(element);
         } else if(dir == bidi_helpers.Dir.LTR) {
             processor.makeLtr(element);
         }
     };
-}
+};
 
 /**
     Example usage:
@@ -185,7 +189,7 @@ module.process_elements = function(elements, processor) {
 module.process_css = function(query, classes) {
     var proc = module.processors.css(classes);
     return module.process(query, proc);
-}
+};
 
 /**
     Example usage:
@@ -199,7 +203,7 @@ module.process_css = function(query, classes) {
 module.process_style = function(query, falign) {
     var proc = module.processors.style(falign);
     return module.process(query, proc);
-}
+};
 
 /**
     The simplest and most straight forward interface: just fix the given
@@ -207,7 +211,7 @@ module.process_style = function(query, falign) {
  */
 module.style = function(query) {
     return module.process_style(query, true);
-}
+};
 
 /**
     The second simplest way to do it: just like do it, but instead of fixing
@@ -215,7 +219,7 @@ module.style = function(query) {
  */
 module.css = function(query) {
     return module.process_css(query, {rtl: 'rtl', ltr: 'ltr'});
-}
+};
 
 // helpers
 /**
@@ -226,8 +230,8 @@ module.css = function(query) {
 module.htmlToElement = function(html) {
     var container = document.createElement('div');
     container.innerHTML = html;
-    return container
-}
+    return container;
+};
 
 /**
     Process html text, i.e. when you need to process stuff before inserting it into the DOM
@@ -241,7 +245,7 @@ module.html_css = function(html) {
     var nodes = container.querySelectorAll('*');
     module.css(nodes);
     return container.innerHTML;
-}
+};
 
 /**
     Process html text, i.e. when you need to process stuff before inserting it into the DOM
@@ -255,7 +259,7 @@ module.html_style = function(html) {
     var nodes = container.querySelectorAll('*');
     module.style(nodes);
     return container.innerHTML;
-}
+};
 
 return module;
-})
+});
